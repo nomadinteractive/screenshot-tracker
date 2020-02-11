@@ -37,7 +37,8 @@
 		"prepackage:all": "rimraf -rf release",
 		"postpackage": "electron-builder build",
 		"postpackage:all": "electron-builder build -mwl",
-		"check": "nomad-codecheck ./src"
+		"check": "nomad-codecheck ./src",
+		"clean": "npm run lint && npm run check"
 	},
 	"dependencies": {
 		"antd": "^3.16.3",
@@ -116,6 +117,7 @@
 	},
 	"husky": {
 		"hooks": {
+			"pre-commit": "npm run clean",
 			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
 		}
 	},
