@@ -1,8 +1,6 @@
-// Libs
 import React from 'react'
 import { HashRouter, Switch, Route } from 'react-router-dom'
-// Screens
-import Home from '../screens/home'
+import Home from './screens/home'
 
 const Routes = () => (
 	<HashRouter>
