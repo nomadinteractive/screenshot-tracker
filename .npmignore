@@ -1,0 +1,7 @@
+_ignore/
+docs/
+release/
+dist/
+.editorconfig
+__snapshots__
+

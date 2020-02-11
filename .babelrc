@@ -1,0 +1,35 @@
+{
+  "presets": ["@babel/env", "@babel/react"],
+  "plugins": [
+    [
+      "import",
+      {
+        "libraryName": "antd",
+        "style": true
+      },
+      "ant"
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/transform-runtime",
+    "react-hot-loader/babel",
+    [
+      "babel-plugin-root-import",
+
+      {
+        "rootPathPrefix": "@",
+        "rootPathSuffix": "./src"
+      }
+    ]
+  ],
+  "env": {
+    "development": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs"]
+    },
+    "test": {
+      "plugins": ["@babel/plugin-transform-modules-commonjs"]
+    },
+    "production": {
+      "plugins": ["transform-react-remove-prop-types"]
+    }
+  }
+}
