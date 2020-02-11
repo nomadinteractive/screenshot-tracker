@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Layout, Menu, Icon } from 'antd'
 
-const { Header, Sider, Content } = Layout
+const { Sider, Content } = Layout
 
 class App extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			collapsed: false,
+			collapsed: true,
 		}
 	}
 
@@ -23,48 +23,60 @@ class App extends Component {
 		const { children } = this.props
 		const { collapsed } = this.state
 		return (
-			<Layout style={{ height: '100%' }}>
+			<Layout style={{ minHeight: '100vh' }}>
 				<Sider
-					trigger={null}
+					trigger={(
+						<span>
+							<Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
+							<span>{collapsed ? '' : ' Hide'}</span>
+						</span>
+					)}
 					collapsible
 					collapsed={collapsed}
+					onCollapse={this.toggle}
+					theme="light"
+					collapsedWidth={50}
 					style={{
-						paddingTop: 20
+						paddingTop: 20,
+						boxShadow: '0 2px 8px rgba(0,0,0,0.11)',
+						zIndex: 3
 					}}
 				>
-					<div className="logo" />
-					<Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-						<Menu.Item key="1">
-							<Icon type="user" />
-							<span>nav 1</span>
+					<Menu
+						style={{
+							border: 0
+						}}
+						mode="inline"
+						selectable={false}
+					>
+						<Menu.Item key="new-run">
+							<Icon type="play-circle" />
+							<span>New Run</span>
 						</Menu.Item>
-						<Menu.Item key="2">
-							<Icon type="video-camera" />
-							<span>nav 2</span>
-						</Menu.Item>
-						<Menu.Item key="3">
-							<Icon type="upload" />
-							<span>nav 3</span>
-						</Menu.Item>
+						<Menu.SubMenu
+							key="runs"
+							title={(
+								<span>
+									<Icon type="clock-circle" />
+									<span>Test Runs</span>
+								</span>
+							)}
+							style={{
+								background: '#fcfcfc'
+							}}
+						>
+							<Menu.Item key="r3">Run #3 - 2/11 11:21a</Menu.Item>
+							<Menu.Item key="r2">Run #2 - 2/11 9:39a</Menu.Item>
+							<Menu.Item key="r1">Run #1 - 2/10 4:21p</Menu.Item>
+						</Menu.SubMenu>
 					</Menu>
 				</Sider>
 				<Layout>
-					<Header style={{ background: '#fff', padding: 0 }}>
-						<Icon
-							type={collapsed ? 'menu-unfold' : 'menu-fold'}
-							onClick={this.toggle}
-							style={{
-								paddingLeft: 20,
-								paddingRight: 20,
-							}}
-						/>
-					</Header>
 					<Content
 						style={{
-							margin: '24px 16px',
-							padding: 24,
 							background: '#fff',
-							minHeight: 280,
+							overflow: 'scroll',
+							height: '100vh'
 						}}
 					>
 						{children}

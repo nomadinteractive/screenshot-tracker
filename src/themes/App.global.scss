@@ -6,5 +6,14 @@
 
 // Global styles
 body {
-  background-color: #f0f2f5;
+  background-color: #ffffff;
+}
+
+.ant-menu-inline-collapsed {
+	width: 50px;
+}
+
+.ant-menu-inline-collapsed > .ant-menu-item,
+.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+	padding: 0 18px !important;
 }
