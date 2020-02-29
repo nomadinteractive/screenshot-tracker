@@ -7,8 +7,7 @@ const storage = electron.remote.require('./storage')
 
 export const listRuns = (dispatch) => () => {
 	const runs = storage.listRuns()
-	const runsRaw = JSON.parse(JSON.stringify(runs))
-	if (typeof runsRaw !== 'object') return
+	const runsRaw = runs ? JSON.parse(JSON.stringify(runs)) : []
 	dispatch({
 		type: LIST_RUNS_SUCCESS,
 		runs: runsRaw

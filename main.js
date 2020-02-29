@@ -3,10 +3,19 @@ const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const windowStateKeeper = require('electron-window-state')
+// const pie = require('puppeteer-in-electron')
+// const puppeteer = require('puppeteer-core')
 
 // for testing
 // const storage = require('./storage') // eslint-disable-line
 // storage.clearRuns() // for testing
+
+// app.commandLine.appendSwitch('remote-debugging-port', '9222')
+
+// let puppetBrowser
+// pie.connect(app, puppeteer)
+// 	.then((browser) => { puppetBrowser = browser })
+// 	.catch((e) => { console.log('----> pupetteer didnt connect propert', e) })
 
 let mainWindow
 
@@ -79,9 +88,15 @@ const createWindow = () => {
 	mainWindow.on('closed', () => {
 		mainWindow = null
 	})
+
+	// setTimeout(() => {
+	// 	runPupeteerTest()
+	// }, 2000)
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+	createWindow()
+})
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
@@ -94,3 +109,21 @@ app.on('activate', () => {
 		createWindow()
 	}
 })
+
+// const runPupeteerTest = async () => {
+// 	const window = new BrowserWindow()
+// 	const testUrl = 'https://example.com/'
+// 	await window.loadURL(testUrl)
+
+// 	try {
+// 		const page = await pie.getPage(puppetBrowser, window)
+// 		await page.screenshot({ path: './page-screenshot.jpg', type: 'jpeg' })
+// 		console.log('----> screenshot saved?')
+// 		console.log(page.url())
+// 	}
+// 	catch (e) {
+// 		console.log('----> Puppeteer attempt exception!', e)
+// 	}
+
+// 	window.destroy()
+// }

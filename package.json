@@ -1,20 +1,20 @@
 {
-	"name": "electron-react-ant-boilerplate",
-	"version": "1.0.9",
-	"description": "Electron, Webpack4, React, Babel 7, ES6, PostCSS, Sass, Ant Design",
+	"name": "screenshot-desktop-tool",
+	"version": "1.0.0",
+	"description": "Screenshot tracking tool using electron/chromium and puppeteer",
 	"license": "MIT",
 	"private": false,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/kevoj/electron-react-ant-boilerplate.git"
+		"url": "git+https://github.com/nomadinteractive/screenshot-app"
 	},
 	"author": {
-		"name": "leonardo R",
-		"email": "leonardo.ricog@gmail.com",
-		"url": "https://github.com/kevoj"
+		"name": "Nomad Interactive",
+		"email": "hello@nomadinteractive.co",
+		"url": "https://nomadinteractive.co"
 	},
 	"engines": {
-		"node": ">=8.0.0",
+		"node": ">=12.0.0",
 		"npm": ">=5.0.0",
 		"yarn": ">=1.0.0"
 	},
@@ -44,12 +44,14 @@
 		"antd": "^3.16.3",
 		"classnames": "^2.2.6",
 		"darkmode-js": "^1.5.5",
-		"electron": "^4.1.4",
+		"electron": "^6.0.1",
 		"electron-is-dev": "^1.1.0",
 		"electron-store": "^5.1.0",
 		"electron-window-state": "^5.0.3",
 		"moment": "^2.24.0",
 		"prop-types": "^15.7.2",
+		"puppeteer-core": "^2.1.1",
+		"puppeteer-in-electron": "^1.0.8",
 		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
 		"react-hot-loader": "^4.12.19",

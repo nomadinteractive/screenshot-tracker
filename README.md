@@ -1,13 +1,13 @@
-# electron-react-ant-boilerplate
+# Screenshot Tracker Desktop App
 
-[![NPM version](https://badge.fury.io/js/electron-react-ant-boilerplate.svg)](https://npmjs.org/package/electron-react-ant-boilerplate) [![GitHub license](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://raw.githubusercontent.com/kevoj/electron-react-ant-boilerplate/master/LICENSE)
+A simple screenshot tarcking tool based on electron's embedded chromium and
+pupeteer.
 
-![Imgur](https://i.imgur.com/pisXBkG.png)
 
 ### Features
 
 - Electron
-- Webpack 4
+- Webpack 8
 - Babel 7
 - React 16
 - ES6
@@ -33,7 +33,7 @@
 #### Clone this repo
 
 ```
-git clone https://github.com/kevoj/electron-react-ant-boilerplate.git
+git clone https://github.com/nomadinteractive/screenshot-app
 ```
 
 #### Install dependencies
@@ -120,4 +120,8 @@ yarn docs
 
 ### License
 
-MIT © [Leonardo Rico](https://github.com/kevoj/electron-react-ant-boilerplate/blob/master/LICENSE)
+MIT © [Nomad Interactive](https://github.com/nomadinteractive/screenshot-app/blob/master/LICENSE)
+
+Boilerplate derived from
+[Leonardo Rico](https://github.com/kevoj/electron-react-ant-boilerplate/blob/master/LICENSE)
+via MIT license
