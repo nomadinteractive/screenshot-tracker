@@ -1,15 +1,24 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Layout, Menu, Icon } from 'antd'
 
+import { listRuns } from './actions'
+
 const { Sider, Content } = Layout
 
-class App extends Component {
+class AppLayout extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
 			collapsed: true,
 		}
+	}
+
+	componentDidMount() {
+		const { listRunsAction } = this.props
+		listRunsAction()
 	}
 
 	toggle = () => {
@@ -20,7 +29,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { children } = this.props
+		const { children, style, runs } = this.props
 		const { collapsed } = this.state
 		return (
 			<Layout style={{ minHeight: '100vh' }}>
@@ -50,8 +59,10 @@ class App extends Component {
 						selectable={false}
 					>
 						<Menu.Item key="new-run">
-							<Icon type="play-circle" />
-							<span>New Run</span>
+							<Link to="/new">
+								<Icon type="play-circle" />
+								<span>New Run</span>
+							</Link>
 						</Menu.Item>
 						<Menu.SubMenu
 							key="runs"
@@ -61,13 +72,14 @@ class App extends Component {
 									<span>Test Runs</span>
 								</span>
 							)}
-							style={{
-								background: '#fcfcfc'
-							}}
 						>
-							<Menu.Item key="r3">Run #3 - 2/11 11:21a</Menu.Item>
-							<Menu.Item key="r2">Run #2 - 2/11 9:39a</Menu.Item>
-							<Menu.Item key="r1">Run #1 - 2/10 4:21p</Menu.Item>
+							{runs && runs.map((run) => (
+								<Menu.Item key={run.id}>
+									<Link to={`/result/${run.id}`}>
+										{run.name}
+									</Link>
+								</Menu.Item>
+							))}
 						</Menu.SubMenu>
 					</Menu>
 				</Sider>
@@ -76,7 +88,8 @@ class App extends Component {
 						style={{
 							background: '#fff',
 							overflow: 'scroll',
-							height: '100vh'
+							height: '100vh',
+							...style
 						}}
 					>
 						{children}
@@ -87,8 +100,23 @@ class App extends Component {
 	}
 }
 
-App.propTypes = {
-	children: PropTypes.node.isRequired
+AppLayout.defaultProps = {
+	style: {}
 }
 
-export default App
+AppLayout.propTypes = {
+	runs: PropTypes.array.isRequired, // eslint-disable-line
+	listRunsAction: PropTypes.func.isRequired,
+	children: PropTypes.node.isRequired,
+	style: PropTypes.object // eslint-disable-line react/forbid-prop-types
+}
+
+const mapStateToProps = (state) => ({
+	runs: state.runs
+})
+
+const mapDispatchToProps = (dispatch) => ({
+	listRunsAction: listRuns(dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppLayout)

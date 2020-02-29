@@ -147,7 +147,7 @@ const config = {
 				NODE_ENV: process.env.NODE_ENV
 			}),
 			new AntdScssThemePlugin(
-				path.join(__dirname, 'src', 'themes/Ant.vars.scss')
+				path.join(__dirname, 'src', 'styles/ant.vars.scss')
 			),
 			new MiniCssExtractPlugin({
 				filename: isDev ? '[name].css' : '[name].[chunkhash].css',
@@ -197,7 +197,7 @@ const config = {
 					env: process.env,
 					stdio: 'inherit'
 				})
-					.on('close', (code) => process.exit(0))
+					.on('close', () => process.exit(0))
 					.on('error', (spawnError) => console.error(spawnError))
 			}
 		},
@@ -226,7 +226,7 @@ const config = {
 			})
 		],
 		output: {
-			path: __dirname + '/dist',
+			path: path.join(__dirname, '/dist'),
 			filename: '[name].[chunkhash].js'
 		},
 		optimization: {

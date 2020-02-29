@@ -5,7 +5,7 @@ import {
 	Button,
 	Icon
 } from 'antd'
-import Layout from '../../layout'
+import Layout from '../layout'
 
 const columns = [
 	{
@@ -83,8 +83,9 @@ let data = [
 data = [...data]
 // data = [...data, ...data, ...data, ...data, ...data, ...data, ...data]
 
-class Home extends Component {
+class RunResult extends Component {
 	render() {
+		// console.log('data', data)
 		return (
 			<Layout>
 				<Table
@@ -99,4 +100,4 @@ class Home extends Component {
 	}
 }
 
-export default Home
+export default RunResult

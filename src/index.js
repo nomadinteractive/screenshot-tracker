@@ -1,9 +1,22 @@
 import React from 'react'
 import { render } from 'react-dom'
-import Routes from './routes'
-import './themes/App.global.scss'
+import { Provider } from 'react-redux'
+import Darkmode from 'darkmode-js'
 
-const App = Routes
+import reduxStore from './store'
+import Routes from './routes'
+import './styles/app.global.scss'
+
+new Darkmode({
+	label: '🌓'
+}).showWidget()
+
+const App = () => (
+	<Provider store={reduxStore}>
+		<Routes />
+	</Provider>
+)
+
 render(<App />, document.getElementById('app'))
 
 if (module.hot) {

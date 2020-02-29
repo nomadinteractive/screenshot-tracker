@@ -1,0 +1,39 @@
+@import "./ant.vars.scss";
+
+body {
+	background-color: #ffffff;
+}
+
+.ant-menu-inline-collapsed {
+	width: 50px;
+}
+
+.ant-menu-inline-collapsed > .ant-menu-item,
+.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+	padding: 0 18px !important;
+}
+
+.darkmode-layer, .darkmode-toggle {
+	z-index: 10000;
+}
+
+.darkmode--activated {
+	// ignore dark mode for elements
+	// .anticon {
+	// 	mix-blend-mode: difference;
+	// }
+
+	// force dark mode
+	.ant-btn.ant-btn-default,
+	.ant-layout-sider .anticon,
+	.ant-menu-submenu-popup .ant-menu-sub {
+		mix-blend-mode: normal;
+	}
+
+	.ant-layout-sider,
+	.ant-layout-sider-trigger,
+	.ant-layout-sider .ant-menu,
+	.ant-menu-submenu-popup .ant-menu-sub {
+		background-color: #eeeeee;
+	}
+}
