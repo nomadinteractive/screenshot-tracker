@@ -5,6 +5,7 @@ import Darkmode from 'darkmode-js'
 
 import reduxStore from './store'
 import Routes from './routes'
+import ElectronListeners from './electron_listeners'
 import './styles/app.global.scss'
 
 new Darkmode({
@@ -14,6 +15,7 @@ new Darkmode({
 const App = () => (
 	<Provider store={reduxStore}>
 		<Routes />
+		<ElectronListeners />
 	</Provider>
 )
 

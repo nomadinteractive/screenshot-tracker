@@ -1,21 +1,29 @@
-const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const windowStateKeeper = require('electron-window-state')
-// const pie = require('puppeteer-in-electron')
-// const puppeteer = require('puppeteer-core')
+const pie = require('puppeteer-in-electron')
+const puppeteer = require('puppeteer-core')
+const {
+	app,
+	BrowserWindow,
+	Menu,
+	ipcMain
+} = require('electron')
 
-// for testing
+// Clean storage for testing
 // const storage = require('./storage') // eslint-disable-line
 // storage.clearRuns() // for testing
 
-// app.commandLine.appendSwitch('remote-debugging-port', '9222')
-
-// let puppetBrowser
-// pie.connect(app, puppeteer)
-// 	.then((browser) => { puppetBrowser = browser })
-// 	.catch((e) => { console.log('----> pupetteer didnt connect propert', e) })
+let puppetBrowser
+pie.connect(app, puppeteer)
+	.then((browser) => { puppetBrowser = browser })
+	.catch((e) => {
+		console.log('----> pupetteer didnt connect propert', e)
+		// TODO: update a key in storage, and check this flag to display a
+		// pop-up in the app ui, and let user to select their Chrome path in
+		// their computer for using that for pupeteer instead of electron chromium
+	})
 
 let mainWindow
 
@@ -89,9 +97,9 @@ const createWindow = () => {
 		mainWindow = null
 	})
 
-	// setTimeout(() => {
-	// 	runPupeteerTest()
-	// }, 2000)
+	ipcMain.on('take-screenshots-of-a-run', (event, arg) => {
+		startRun(arg.id)
+	})
 }
 
 app.on('ready', () => {
@@ -110,20 +118,41 @@ app.on('activate', () => {
 	}
 })
 
-// const runPupeteerTest = async () => {
-// 	const window = new BrowserWindow()
-// 	const testUrl = 'https://example.com/'
-// 	await window.loadURL(testUrl)
+const startRun = (runId) => {
+	console.log(runId)
+	// loop and take screenshots,
+	// update run Obj in every screenshot and
+	// send to renderer process:
+	// mainWindow.webContents.send('run-updated', updatedRun)
+}
 
-// 	try {
-// 		const page = await pie.getPage(puppetBrowser, window)
-// 		await page.screenshot({ path: './page-screenshot.jpg', type: 'jpeg' })
-// 		console.log('----> screenshot saved?')
-// 		console.log(page.url())
-// 	}
-// 	catch (e) {
-// 		console.log('----> Puppeteer attempt exception!', e)
-// 	}
+const takeScreenshotOfWebpage = async (testUrl, viewportWidth, filePath) => {
+	let returnVal = false
+	const puppetWindow = new BrowserWindow({
+		x: -10000,
+		y: 3000,
+		width: viewportWidth,
+		height: 500, // doesn't matter
+		show: false,
+	})
 
-// 	window.destroy()
-// }
+	await puppetWindow.loadURL(testUrl)
+	// Or wait until domready + networkidle?
+
+	try {
+		const page = await pie.getPage(puppetBrowser, puppetWindow)
+		await page.screenshot({
+			path: filePath,
+			type: 'jpeg',
+			fullPage: true
+		})
+		returnVal = true
+	}
+	catch (e) {
+		console.log('----> Puppeteer save screenshot attempt failed!', e)
+	}
+
+	puppetWindow.destroy()
+
+	return returnVal
+}

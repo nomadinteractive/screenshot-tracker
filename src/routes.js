@@ -4,7 +4,6 @@ import { hot } from 'react-hot-loader/root'
 
 import Home from './screens/home'
 import NewRun from './screens/new_run'
-import RunStatus from './screens/run_status'
 import RunResult from './screens/run_result'
 
 const Routes = () => (
@@ -12,7 +11,6 @@ const Routes = () => (
 		<Switch>
 			<Route exact path="/" component={Home} />
 			<Route exact path="/new" component={NewRun} />
-			<Route exact path="/status/:runId" component={RunStatus} />
 			<Route exact path="/result/:runId" component={RunResult} />
 		</Switch>
 	</HashRouter>
