@@ -59,6 +59,7 @@
 		"react-router-dom": "^5.0.0",
 		"redux": "^4.0.5",
 		"redux-thunk": "^2.3.0",
+		"slugify": "^1.4.0",
 		"terser-webpack-plugin": "^2.3.4"
 	},
 	"devDependencies": {
