@@ -9,11 +9,8 @@ const ipc = electron.ipcRenderer
 
 const ElectronListeners = (props) => {
 	const { updateRunAction } = props
-	// listen incoming messages from the main thread and fire up the related actions
 	ipc.on('run-updated', (event, arg) => {
-		console.log('event, arg')
-		console.log(event, arg)
-		updateRunAction(arg.updatedRun)
+		updateRunAction(arg.id, arg)
 	})
 	return (<span />)
 }

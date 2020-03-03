@@ -1,9 +1,11 @@
 const path = require('path')
+const fs = require('fs')
 const url = require('url')
 const isDev = require('electron-is-dev')
 const windowStateKeeper = require('electron-window-state')
 const pie = require('puppeteer-in-electron')
 const puppeteer = require('puppeteer-core')
+const slugify = require('slugify')
 const {
 	app,
 	BrowserWindow,
@@ -11,9 +13,14 @@ const {
 	ipcMain
 } = require('electron')
 
+const storage = require('./storage') // eslint-disable-line
+
 // Clean storage for testing
-// const storage = require('./storage') // eslint-disable-line
-// storage.clearRuns() // for testing
+storage.clearRuns() // for testing
+
+const appDocumentsDirectory = path.join(app.getPath('documents'), '/screenshot-tool')
+console.log('--> appDocumentsDirectory', appDocumentsDirectory)
+if (!fs.existsSync(appDocumentsDirectory)) { fs.mkdirSync(appDocumentsDirectory); console.log('==> appDocumentsDirectory was not exists created!') }
 
 let puppetBrowser
 pie.connect(app, puppeteer)
@@ -118,12 +125,36 @@ app.on('activate', () => {
 	}
 })
 
-const startRun = (runId) => {
-	console.log(runId)
-	// loop and take screenshots,
-	// update run Obj in every screenshot and
-	// send to renderer process:
-	// mainWindow.webContents.send('run-updated', updatedRun)
+const startRun = async (runId) => {
+	const run = storage.getRun(runId)
+	const runDirectory = appDocumentsDirectory + '/' + run.id + '-' + slugify(run.name)
+	// console.log('--> runDirectory', runDirectory)
+	if (!fs.existsSync(runDirectory)) { fs.mkdirSync(runDirectory) }
+	if (run && run.pages) {
+		for (let i = 0; i < run.pages.length; i += 1) {
+			const page = run.pages[i]
+			const resolutions = Object.keys(page.screenshots)
+			for (let j = 0; j < resolutions.length; j += 1) {
+				const resolution = resolutions[j]
+				const screenshotFilePath = runDirectory + '/'
+					+ slugify(page.url).replace(/https?/g, '').replace(/[./:]/g, '') + '-' + resolution + '.jpg'
+				// console.log('--> screenshotFilePath', screenshotFilePath)
+				run.pages[i].screenshots[resolution].file = screenshotFilePath
+				let viewportWidth = 1440
+				if (resolution === 'tabletLandscape') viewportWidth = 1024
+				if (resolution === 'tabletPortrait') viewportWidth = 768
+				if (resolution === 'mobile') viewportWidth = 350
+				// eslint-disable-next-line
+				const screenshotResult = await takeScreenshotOfWebpage(page.url, viewportWidth, screenshotFilePath)
+				// console.log('--> screenshotResult', screenshotResult)
+				if (screenshotResult) run.pages[i].screenshots[resolution].status = 'success'
+				else run.pages[i].screenshots[resolution].status = 'failed'
+				// console.log('--> updatedRun', run)
+				storage.updateRun(runId, run)
+				mainWindow.webContents.send('run-updated', run)
+			}
+		}
+	}
 }
 
 const takeScreenshotOfWebpage = async (testUrl, viewportWidth, filePath) => {
@@ -137,6 +168,9 @@ const takeScreenshotOfWebpage = async (testUrl, viewportWidth, filePath) => {
 	})
 
 	await puppetWindow.loadURL(testUrl)
+	// await new Promise((resolve) => {
+	// 	puppetWindow.once('ready-to-show', resolve)
+	// })
 	// Or wait until domready + networkidle?
 
 	try {

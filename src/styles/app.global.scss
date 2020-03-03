@@ -19,9 +19,9 @@ body {
 
 .darkmode--activated {
 	// ignore dark mode for elements
-	// .anticon {
-	// 	mix-blend-mode: difference;
-	// }
+	img.screenshot {
+		mix-blend-mode: difference;
+	}
 
 	// force dark mode
 	.ant-btn.ant-btn-default,

@@ -5,11 +5,20 @@ import {
 	Table,
 	// Tag,
 	// Button,
-	// Icon
+	Icon,
 } from 'antd'
 
 import { listRuns } from '../actions'
 import Layout from '../layout'
+
+const { remote } = window.require('electron')
+
+const fs = remote.require('fs')
+
+const getImageBase64Data = (filepath) => {
+	const imgBase64 = fs.readFileSync(filepath).toString('base64')
+	return 'data:image/png;base64,' + imgBase64
+}
 
 class RunResult extends Component {
 	constructor(props) {
@@ -22,14 +31,23 @@ class RunResult extends Component {
 	}
 
 	componentDidMount() {
+		const { listRunsAction } = this.props
+		listRunsAction()
 		this.getRun()
 	}
 
+	componentDidUpdate(previousProps) {
+		const { runs } = this.props
+		if (runs !== previousProps.runs) {
+			this.getRun()
+		}
+	}
+
 	getRun() {
-		const { listRunsAction } = this.props
+		const { runs } = this.props
 		const { runId } = this.props.match.params // eslint-disable-line
 
-		const runs = listRunsAction()
+		// const runs = listRunsAction()
 		let runObj = null
 		runs.forEach((run) => {
 			if (parseInt(run.id, 10) === parseInt(runId, 10)) {
@@ -48,7 +66,20 @@ class RunResult extends Component {
 			key: 'screenshots.' + screenshotResName,
 			render: (text, record) => (
 				<span>
-					{record.screenshots[screenshotResName].status}
+					{record.screenshots[screenshotResName].status === 'success' && (
+						<img
+							src={getImageBase64Data(record.screenshots[screenshotResName].file)}
+							alt={screenshotResName}
+							height={150}
+							className="screenshot"
+						/>
+					)}
+					{record.screenshots[screenshotResName].status === 'pending' && (
+						<Icon type="loading" />
+					)}
+					{record.screenshots[screenshotResName].status === 'failed' && (
+						<Icon type="warning" />
+					)}
 				</span>
 			)
 		}
@@ -87,7 +118,7 @@ class RunResult extends Component {
 		// 	)
 		// })
 
-		console.log(columns)
+		// console.log('--> columns', columns)
 
 		this.setState({ columns })
 	}
@@ -115,10 +146,13 @@ class RunResult extends Component {
 }
 
 RunResult.propTypes = {
-	listRunsAction: PropTypes.func.isRequired
+	listRunsAction: PropTypes.func.isRequired,
+	runs: PropTypes.array.isRequired // eslint-disable-line
 }
 
-const mapStateToProps = () => ({ })
+const mapStateToProps = (state) => ({
+	runs: state.runs
+})
 
 const mapDispatchToProps = (dispatch) => ({
 	listRunsAction: listRuns(dispatch)

@@ -9,6 +9,7 @@ const ipc = electron.ipcRenderer
 export const listRuns = (dispatch) => () => {
 	const runs = storage.listRuns()
 	const runsRaw = runs ? JSON.parse(JSON.stringify(runs)) : []
+	// console.log('--> listRuns - runsRaw', runsRaw)
 	dispatch({
 		type: LIST_RUNS_SUCCESS,
 		runs: runsRaw
@@ -23,8 +24,9 @@ export const saveRun = (dispatch) => (runObj) => {
 	return savedRun.id
 }
 
-export const updateRun = (dispatch) => (updatedRunObj) => {
-	storage.updateRun(updatedRunObj)
+export const updateRun = (dispatch) => (id, updatedRunObj) => {
+	// console.log('--> id, updatedRunObj', id, updatedRunObj)
+	storage.updateRun(id, updatedRunObj)
 	listRuns(dispatch)()
 }
 
