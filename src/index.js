@@ -6,6 +6,8 @@ import Darkmode from 'darkmode-js'
 import reduxStore from './store'
 import Routes from './routes'
 import ElectronListeners from './electron_listeners'
+
+import 'react-image-lightbox/style.css'
 import './styles/app.global.scss'
 
 new Darkmode({

@@ -7,6 +7,7 @@ import {
 	// Button,
 	Icon,
 } from 'antd'
+import Lightbox from 'react-image-lightbox'
 
 import { listRuns } from '../actions'
 import Layout from '../layout'
@@ -27,6 +28,9 @@ class RunResult extends Component {
 		this.state = {
 			run: null,
 			columns: [],
+			lightboxImages: [],
+			lightboxImageIndex: 0,
+			lightboxIsVisible: false,
 		}
 	}
 
@@ -54,7 +58,24 @@ class RunResult extends Component {
 				runObj = run
 			}
 		})
-		this.setState({ run: runObj })
+
+		// Get base64 of the images read from the FS
+		const lightboxImages = []
+		if (runObj && runObj.pages) {
+			runObj.pages = runObj.pages.map((page) => {
+				const updatedPage = { ...page }
+				Object.keys(page.screenshots).forEach((resolution) => {
+					updatedPage.screenshots[resolution].imageb64 = getImageBase64Data(page.screenshots[resolution].file)
+					lightboxImages.push(updatedPage.screenshots[resolution].imageb64)
+				})
+				return updatedPage
+			})
+		}
+
+		this.setState({
+			run: runObj,
+			lightboxImages
+		})
 		this.setTableColumns(runObj)
 	}
 
@@ -65,13 +86,16 @@ class RunResult extends Component {
 			dataIndex: 'screenshots.' + screenshotResName,
 			key: 'screenshots.' + screenshotResName,
 			render: (text, record) => (
-				<span>
+				<div className="screenshotContainer">
 					{record.screenshots[screenshotResName].status === 'success' && (
+						// eslint-disable-next-line
 						<img
-							src={getImageBase64Data(record.screenshots[screenshotResName].file)}
+							src={record.screenshots[screenshotResName].imageb64}
 							alt={screenshotResName}
-							height={150}
 							className="screenshot"
+							onClick={() => {
+								this.openLightboxWithScreenshot(record.screenshots[screenshotResName].imageb64)
+							}}
 						/>
 					)}
 					{record.screenshots[screenshotResName].status === 'pending' && (
@@ -80,7 +104,7 @@ class RunResult extends Component {
 					{record.screenshots[screenshotResName].status === 'failed' && (
 						<Icon type="warning" />
 					)}
-				</span>
+				</div>
 			)
 		}
 	}
@@ -123,24 +147,61 @@ class RunResult extends Component {
 		this.setState({ columns })
 	}
 
+	openLightboxWithScreenshot(b64) {
+		const { lightboxImages } = this.state
+		const lightboxImageIndex = lightboxImages.indexOf(b64)
+		this.setState({
+			lightboxIsVisible: true,
+			lightboxImageIndex
+		})
+	}
+
 	render() {
-		const { run, columns } = this.state
+		const {
+			run,
+			columns,
+			lightboxImages,
+			lightboxImageIndex,
+			lightboxIsVisible,
+		} = this.state
 
 		return (
-			<Layout>
-				{run && run.pages ? (
-					<Table
-						columns={columns}
-						dataSource={run.pages}
-						rowKey="url"
-						pagination={false}
-						// scroll={{ y: '100vh' }}
-						scroll={{ y: 'max-content' }}
+			<div>
+				<Layout>
+					{run && run.pages ? (
+						<Table
+							columns={columns}
+							dataSource={run.pages}
+							rowKey="url"
+							pagination={false}
+							// scroll={{ y: '100vh' }}
+							scroll={{ y: 'max-content' }}
+						/>
+					) : (
+						<span>Loading...</span>
+					)}
+				</Layout>
+				{lightboxIsVisible && (
+					<Lightbox
+						mainSrc={lightboxImages[lightboxImageIndex]}
+						nextSrc={lightboxImages[(lightboxImageIndex + 1) % lightboxImages.length]}
+						// eslint-disable-next-line
+						prevSrc={lightboxImages[(lightboxImageIndex + lightboxImages.length - 1) % lightboxImages.length]}
+						onCloseRequest={() => this.setState({ lightboxIsVisible: false })}
+						onMovePrevRequest={() => {
+							this.setState({
+								// eslint-disable-next-line
+								lightboxImageIndex: (lightboxImageIndex + lightboxImages.length - 1) % lightboxImages.length,
+							})
+						}}
+						onMoveNextRequest={() => {
+							this.setState({
+								lightboxImageIndex: (lightboxImageIndex + 1) % lightboxImages.length,
+							})
+						}}
 					/>
-				) : (
-					<span>Loading...</span>
 				)}
-			</Layout>
+			</div>
 		)
 	}
 }

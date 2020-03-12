@@ -20,7 +20,10 @@ storage.clearRuns() // for testing
 
 const appDocumentsDirectory = path.join(app.getPath('documents'), '/screenshot-tool')
 console.log('--> appDocumentsDirectory', appDocumentsDirectory)
-if (!fs.existsSync(appDocumentsDirectory)) { fs.mkdirSync(appDocumentsDirectory); console.log('==> appDocumentsDirectory was not exists created!') }
+if (!fs.existsSync(appDocumentsDirectory)) {
+	fs.mkdirSync(appDocumentsDirectory)
+	console.log('==> appDocumentsDirectory was not exists created!')
+}
 
 let puppetBrowser
 pie.connect(app, puppeteer)

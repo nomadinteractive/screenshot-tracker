@@ -132,7 +132,7 @@ const config = {
 					]
 				},
 				{
-					test: /\.less$/,
+					test: /\.(less|css)$/,
 					use: [
 						sassHotLoader,
 						MiniCssExtractPlugin.loader,
