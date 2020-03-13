@@ -4,7 +4,8 @@ const store = new Store()
 
 const KEYS = {
 	RUNS: 'runs',
-	RUNS_NEXT_ID: 'runs_next_id'
+	RUNS_NEXT_ID: 'runs_next_id',
+	LAST_RUN_OBJ: 'last_run_obj',
 }
 
 const getNextRunId = () => (parseInt(store.get(KEYS.RUNS_NEXT_ID), 10) || 1)
@@ -66,6 +67,9 @@ const clearRuns = () => {
 	store.set(KEYS.RUNS_NEXT_ID, null)
 }
 
+const getLastRunObj = () => store.get(KEYS.LAST_RUN_OBJ)
+const saveLastRunObj = (runData) => store.set(KEYS.LAST_RUN_OBJ, runData)
+
 module.exports = {
 	getNextRunId,
 	saveRun,
@@ -73,5 +77,7 @@ module.exports = {
 	getRun,
 	updateRun,
 	deleteRun,
-	clearRuns
+	clearRuns,
+	getLastRunObj,
+	saveLastRunObj
 }

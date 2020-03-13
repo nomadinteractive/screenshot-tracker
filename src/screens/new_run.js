@@ -41,12 +41,12 @@ class NewRun extends Component {
 		super(props)
 
 		this.state = {
+			runIsSaved: false,
 			newRunId: null,
-			// urls: '',
-			urls: 'https://google.com\nhttps://about.google/',
+			name: '',
+			urls: '',
 			resolutions: {
 				desktop: true,
-				// desktop: false,
 				tabletPortrait: false,
 				tabletLandscape: false,
 				mobile: true,
@@ -57,6 +57,30 @@ class NewRun extends Component {
 				// resource: false
 			}
 		}
+	}
+
+	componentDidMount() {
+		const { resolutions } = this.state
+		const newRunId = storage.getNextRunId()
+		const lastRunObj = storage.getLastRunObj()
+		const updatedResolutions = { ...resolutions }
+		const urlsArr = []
+		if (lastRunObj && lastRunObj.pages) {
+			for (let i = 0; i < lastRunObj.pages.lenth; i += 1) {
+				urlsArr.push(lastRunObj.pages[i].url)
+				if (lastRunObj.pages[i].screenshots.desktop) updatedResolutions.desktop = true
+				if (lastRunObj.pages[i].screenshots.tabletPortrait) updatedResolutions.tabletPortrait = true
+				if (lastRunObj.pages[i].screenshots.tabletLandscape) updatedResolutions.tabletLandscape = true
+				if (lastRunObj.pages[i].screenshots.mobile) updatedResolutions.mobile = true
+			}
+		}
+		const newRunStateKeys = {
+			newRunId,
+			name: `Run #${newRunId} - ${moment().format('M/D H:m a')}`,
+			urls: urlsArr.join('\n') || 'https://apple.com\nhttps://medium.com',
+			resolutions: updatedResolutions
+		}
+		this.setState(newRunStateKeys)
 	}
 
 	handleResolutionOptionChange(res) {
@@ -79,14 +103,9 @@ class NewRun extends Component {
 		})
 	}
 
-	// copySettingsFromLastRun() {
-	// 	// retrieve last run's settings
-	// 	// set state with it
-	// }
-
 	handleSubmit() {
 		const { saveRunAction } = this.props
-		const { urls, resolutions } = this.state
+		const { name, urls, resolutions } = this.state
 
 		if (urls.length < 2) {
 			return notification.error({
@@ -124,7 +143,6 @@ class NewRun extends Component {
 
 		const screenshots = {}
 		Object.keys(resolutions).forEach((resolution) => {
-			// console.log(resolution, resolutions[resolution])
 			if (resolutions[resolution]) {
 				screenshots[resolution] = {
 					status: 'pending',
@@ -141,21 +159,27 @@ class NewRun extends Component {
 			})
 		})
 
-		const newRunId = storage.getNextRunId()
-		saveRunAction({
-			// ? Feature: Allow users to edit new run name
-			name: `Run #${newRunId} - ${moment().format('M/D H:m a')}`,
+		const runObjToSave = {
+			name,
 			pages: pagesArr,
 			resolutions
-		})
-		this.setState({ newRunId })
+		}
+		saveRunAction(runObjToSave)
+		storage.saveLastRunObj(runObjToSave)
+		this.setState({ runIsSaved: true })
 	}
 
 	render() {
-		const { newRunId, urls, resolutions } = this.state
+		const {
+			runIsSaved,
+			newRunId,
+			name,
+			urls,
+			resolutions
+		} = this.state
 		// options
 
-		if (newRunId) {
+		if (runIsSaved) {
 			return <Redirect to={`/result/${newRunId}`} />
 		}
 
@@ -174,6 +198,12 @@ class NewRun extends Component {
 					// )}
 				/>
 				<Form layout="vertical">
+					<Form.Item label="Run Name">
+						<Input
+							onChange={(e) => { this.setState({ name: e.target.value }) }}
+							value={name}
+						/>
+					</Form.Item>
 					<Form.Item label="URLs">
 						<Input.TextArea
 							placeholder="One url each line"

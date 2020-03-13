@@ -1,22 +1,32 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import {
 	Table,
-	// Tag,
-	// Button,
+	Input,
+	Button,
+	Menu,
+	Dropdown,
 	Icon,
+	Modal,
+	Tooltip,
 } from 'antd'
 import Lightbox from 'react-image-lightbox'
 
 import { listRuns } from '../actions'
 import Layout from '../layout'
 
+// const path = window.require('path')
 const { remote } = window.require('electron')
+const { shell } = remote
+const storage = remote.require('./storage')
 
 const fs = remote.require('fs')
 
 const getImageBase64Data = (filepath) => {
+	if (typeof filepath !== 'string') return
+	if (!fs.existsSync(filepath)) return
 	const imgBase64 = fs.readFileSync(filepath).toString('base64')
 	return 'data:image/png;base64,' + imgBase64
 }
@@ -26,11 +36,15 @@ class RunResult extends Component {
 		super(props)
 
 		this.state = {
+			redirect: false,
+			redirectTo: null,
 			run: null,
 			columns: [],
 			lightboxImages: [],
 			lightboxImageIndex: 0,
 			lightboxIsVisible: false,
+			renamedRunName: '',
+			isInRenameRunMode: false,
 		}
 	}
 
@@ -86,18 +100,28 @@ class RunResult extends Component {
 			dataIndex: 'screenshots.' + screenshotResName,
 			key: 'screenshots.' + screenshotResName,
 			render: (text, record) => (
-				<div className="screenshotContainer">
-					{record.screenshots[screenshotResName].status === 'success' && (
-						// eslint-disable-next-line
-						<img
-							src={record.screenshots[screenshotResName].imageb64}
-							alt={screenshotResName}
-							className="screenshot"
-							onClick={() => {
-								this.openLightboxWithScreenshot(record.screenshots[screenshotResName].imageb64)
-							}}
-						/>
-					)}
+				<div>
+					{record.screenshots[screenshotResName].status === 'success'
+						&& record.screenshots[screenshotResName].imageb64 ? (
+							<div className="screenshotContainer">
+								{/* eslint-disable-next-line */}
+								<img
+									src={record.screenshots[screenshotResName].imageb64}
+									alt={screenshotResName}
+									className="screenshot"
+									onClick={() => {
+										this.openLightboxWithScreenshot(record.screenshots[screenshotResName].imageb64)
+									}}
+								/>
+							</div>
+						) : (
+							<div>
+								{/* eslint-disable-next-line */}
+								<Tooltip title="An error occured while locating and loading the image. It may be deleted.">
+									<Icon type="warning" style={{ fontSize: 24 }} />
+								</Tooltip>
+							</div>
+						)}
 					{record.screenshots[screenshotResName].status === 'pending' && (
 						<Icon type="loading" />
 					)}
@@ -156,18 +180,160 @@ class RunResult extends Component {
 		})
 	}
 
+	deleteRun() {
+		const { run } = this.state
+		const { listRunsAction } = this.props
+
+		Modal.confirm({
+			content: 'Are you sure you want to delete this run?',
+			okText: 'Delete',
+			okType: 'danger',
+			onOk: () => {
+				storage.deleteRun(run.id)
+				listRunsAction()
+				this.setState({
+					redirect: true,
+					redirectTo: '/',
+				})
+			}
+		})
+	}
+
+	renameRun() {
+		const { listRunsAction } = this.props
+		const { run, renamedRunName } = this.state
+		const updatedRun = { ...run }
+		updatedRun.name = renamedRunName
+		storage.updateRun(run.id, updatedRun)
+		this.setState({
+			run: updatedRun,
+			isInRenameRunMode: false
+		})
+		listRunsAction()
+	}
+
+	openRunFolder() {
+		const { run } = this.state
+		if (run.pages && run.pages[0] && run.pages[0].screenshots) {
+			const aScreenshotFile = Object.values(run.pages[0].screenshots)[0].file
+			// const runFolderPath = path.dirname(aScreenshotFile)
+			shell.showItemInFolder(aScreenshotFile)
+		}
+	}
+
 	render() {
 		const {
+			redirect,
+			redirectTo,
 			run,
 			columns,
 			lightboxImages,
 			lightboxImageIndex,
 			lightboxIsVisible,
+			isInRenameRunMode
 		} = this.state
+
+		if (redirect) {
+			return (
+				<Redirect to={redirectTo} />
+			)
+		}
 
 		return (
 			<div>
 				<Layout>
+					{run && (
+						<div
+							style={{
+								display: 'flex',
+								height: 50,
+								flexDirection: 'row',
+								backgroundColor: '#efefef',
+							}}
+						>
+							<div
+								style={{
+									display: 'flex',
+									flex: 2,
+									alignItems: 'center',
+									paddingLeft: 20,
+									// backgroundColor: 'yellow',
+								}}
+							>
+								{!isInRenameRunMode && (
+									<h3 style={{ margin: 0 }}>
+										{run.name}
+										<Button
+											type="link"
+											size="small"
+											onClick={() => {
+												this.setState({ isInRenameRunMode: true })
+											}}
+										>
+											<Icon type="edit" />
+										</Button>
+									</h3>
+								)}
+								{isInRenameRunMode && (
+									<div style={{ width: '100%' }}>
+										<Input.Group compact>
+											<Input
+												defaultValue={run.name}
+												onChange={(e) => { this.setState({ renamedRunName: e.target.value }) }}
+												style={{ width: '50%' }}
+											/>
+											<Button onClick={this.renameRun.bind(this)}>Rename</Button>
+											<Button
+												onClick={() => {
+													this.setState({ isInRenameRunMode: false })
+												}}
+											>
+												<Icon type="close" />
+											</Button>
+										</Input.Group>
+									</div>
+								)}
+							</div>
+							<div
+								style={{
+									display: 'flex',
+									flex: 1,
+									justifyContent: 'flex-end',
+									alignItems: 'center',
+									paddingRight: 15,
+									// backgroundColor: 'blue',
+								}}
+							>
+								<Button
+									size="small"
+									style={{ marginRight: 10 }}
+									onClick={this.openRunFolder.bind(this)}
+								>
+									Open Screenshots Folder
+								</Button>
+								{/* <Button size="small" style={{ marginRight: 10 }}>
+									<Icon type="reload" />
+								</Button> */}
+								<Dropdown
+									trigger={['click']}
+									overlay={(
+										<Menu>
+											{/* <Menu.Item>Export</Menu.Item> */}
+											<Menu.Item
+												onClick={this.deleteRun.bind(this)}
+											>
+												Delete
+											</Menu.Item>
+										</Menu>
+									)}
+								>
+									<Button size="small">
+										<Icon type="more" rotate={90} />
+									</Button>
+								</Dropdown>
+							</div>
+						</div>
+					)}
 					{run && run.pages ? (
 						<Table
 							columns={columns}

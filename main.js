@@ -130,7 +130,8 @@ app.on('activate', () => {
 
 const startRun = async (runId) => {
 	const run = storage.getRun(runId)
-	const runDirectory = appDocumentsDirectory + '/' + run.id + '-' + slugify(run.name)
+	const runDirectory = appDocumentsDirectory + '/' + run.id + '-'
+		+ slugify(run.name.replace('/', '-').replace(':', '.'))
 	// console.log('--> runDirectory', runDirectory)
 	if (!fs.existsSync(runDirectory)) { fs.mkdirSync(runDirectory) }
 	if (run && run.pages) {
@@ -157,6 +158,7 @@ const startRun = async (runId) => {
 				mainWindow.webContents.send('run-updated', run)
 			}
 		}
+		// Mark run status as finished
 	}
 }
 
@@ -170,18 +172,29 @@ const takeScreenshotOfWebpage = async (testUrl, viewportWidth, filePath) => {
 		show: false,
 	})
 
-	await puppetWindow.loadURL(testUrl)
-	// await new Promise((resolve) => {
-	// 	puppetWindow.once('ready-to-show', resolve)
-	// })
-	// Or wait until domready + networkidle?
+	// if (viewportWidth < 1000) {
+	// 	puppetWindow.webContents.enableDeviceEmulation({
+	// 		screenPosition: 'mobile',
+	// 		screenSize: {
+	// 			width: viewportWidth,
+	// 			height: 500
+	// 		},
+	// 		deviceScaleFactor: 2
+	// 	})
+	// }
+
+	await puppetWindow.loadURL(testUrl, { waitUntil: 'networkidle0' })
+	// lazy load issue :(
 
 	try {
 		const page = await pie.getPage(puppetBrowser, puppetWindow)
+		// lazy load issue
+		// await page.evaluate(() => { window.scrollBy(0, window.innerHeight) })
+		// await new Promise((r) => setTimeout(r, 2000))
 		await page.screenshot({
 			path: filePath,
 			type: 'jpeg',
-			fullPage: true
+			fullPage: true,
 		})
 		returnVal = true
 	}
