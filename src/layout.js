@@ -29,10 +29,19 @@ class AppLayout extends Component {
 	}
 
 	render() {
-		const { children, style, runs } = this.props
+		const {
+			children,
+			style,
+			runs,
+			className
+		} = this.props
 		const { collapsed } = this.state
+
 		return (
-			<Layout style={{ minHeight: '100vh' }}>
+			<Layout
+				className={className}
+				style={{ minHeight: '100vh' }}
+			>
 				<Sider
 					trigger={(
 						<span>
@@ -82,6 +91,22 @@ class AppLayout extends Component {
 							))}
 						</Menu.SubMenu>
 					</Menu>
+					<Menu
+						style={{
+							border: 0,
+							position: 'absolute',
+							bottom: 60
+						}}
+						mode="inline"
+						selectable={false}
+					>
+						<Menu.Item key="new-run">
+							<Link to="/about">
+								<Icon type="question-circle" />
+								<span>About</span>
+							</Link>
+						</Menu.Item>
+					</Menu>
 				</Sider>
 				<Layout>
 					<Content
@@ -101,6 +126,7 @@ class AppLayout extends Component {
 }
 
 AppLayout.defaultProps = {
+	className: '',
 	style: {}
 }
 
@@ -108,6 +134,7 @@ AppLayout.propTypes = {
 	runs: PropTypes.array.isRequired, // eslint-disable-line
 	listRunsAction: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
+	className: PropTypes.string,
 	style: PropTypes.object // eslint-disable-line react/forbid-prop-types
 }
 

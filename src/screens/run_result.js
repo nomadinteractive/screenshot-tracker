@@ -101,27 +101,31 @@ class RunResult extends Component {
 			key: 'screenshots.' + screenshotResName,
 			render: (text, record) => (
 				<div>
-					{record.screenshots[screenshotResName].status === 'success'
-						&& record.screenshots[screenshotResName].imageb64 ? (
-							<div className="screenshotContainer">
-								{/* eslint-disable-next-line */}
-								<img
-									src={record.screenshots[screenshotResName].imageb64}
-									alt={screenshotResName}
-									className="screenshot"
-									onClick={() => {
-										this.openLightboxWithScreenshot(record.screenshots[screenshotResName].imageb64)
-									}}
-								/>
-							</div>
-						) : (
-							<div>
-								{/* eslint-disable-next-line */}
-								<Tooltip title="An error occured while locating and loading the image. It may be deleted.">
-									<Icon type="warning" style={{ fontSize: 24 }} />
-								</Tooltip>
-							</div>
-						)}
+					{record.screenshots[screenshotResName].status === 'success' && (
+						<div>
+							{record.screenshots[screenshotResName].imageb64 ? (
+								<div className="screenshotContainer">
+									{/* eslint-disable-next-line */}
+									<img
+										src={record.screenshots[screenshotResName].imageb64}
+										alt={screenshotResName}
+										className="screenshot"
+										onClick={() => {
+											// eslint-disable-next-line
+											this.openLightboxWithScreenshot(record.screenshots[screenshotResName].imageb64)
+										}}
+									/>
+								</div>
+							) : (
+								<div>
+									{/* eslint-disable-next-line */}
+									<Tooltip title="An error occured while locating and loading the image. It may be deleted.">
+										<Icon type="warning" style={{ fontSize: 24 }} />
+									</Tooltip>
+								</div>
+							)}
+						</div>
+					)}
 					{record.screenshots[screenshotResName].status === 'pending' && (
 						<Icon type="loading" />
 					)}

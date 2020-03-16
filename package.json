@@ -19,13 +19,14 @@
 		"yarn": ">=1.0.0"
 	},
 	"homepage": "",
-	"main": "main.js",
+	"main": "./main.js",
 	"scripts": {
 		"start": "npm run env:dev -- webpack-dev-server",
 		"build": "npm run env:prod -- webpack",
 		"prod": "npm run build && electron --noDevServer .",
 		"package": "npm run build",
 		"package:all": "npm run build",
+		"package:nosign": "CSC_IDENTITY_AUTO_DISCOVERY=false npm run package",
 		"test": "jest -u",
 		"lint": "eslint ./src",
 		"docs": "jsdoc -r ./src -d docs --verbose",
@@ -41,10 +42,10 @@
 		"clean": "npm run lint && npm run check"
 	},
 	"dependencies": {
+		"@sentry/electron": "^1.3.0",
 		"antd": "^3.16.3",
 		"classnames": "^2.2.6",
 		"darkmode-js": "^1.5.5",
-		"electron": "^6.0.1",
 		"electron-is-dev": "^1.1.0",
 		"electron-store": "^5.1.0",
 		"electron-window-state": "^5.0.3",
@@ -64,6 +65,7 @@
 		"terser-webpack-plugin": "^2.3.4"
 	},
 	"devDependencies": {
+		"electron": "^6.0.1",
 		"@babel/core": "^7.4.3",
 		"@babel/plugin-proposal-class-properties": "^7.4.0",
 		"@babel/plugin-transform-modules-commonjs": "^7.4.3",
@@ -90,6 +92,7 @@
 		"css-hot-loader": "^1.4.4",
 		"css-loader": "^2.1.1",
 		"electron-builder": "^20.39.0",
+		"electron-notarize": "^0.2.1",
 		"enzyme": "^3.9.0",
 		"enzyme-adapter-react-16": "^1.12.1",
 		"enzyme-to-json": "^3.3.5",
@@ -134,28 +137,27 @@
 		}
 	},
 	"build": {
-		"productName": "MyApp",
-		"appId": "org.develar.MyApp",
+		"productName": "Screenshot Tracker",
+		"appId": "co.nomadinteractive.screenshot-tool",
+		"asar": false,
+		"afterSign": "scripts/notarize.js",
 		"files": [
 			"dist",
 			"main.js",
+			"storage.js",
+			"sentry.js",
 			"package.json"
 		],
-		"dmg": {
-			"contents": [
-				{
-					"x": 130,
-					"y": 220
-				},
-				{
-					"x": 410,
-					"y": 220,
-					"type": "link",
-					"path": "/Applications"
-				}
-			]
+		"mac": {
+			"icon": "./public/appicon_512.png",
+			"target": "pkg",
+			"hardenedRuntime": true,
+			"gatekeeperAssess": false,
+			"entitlements": "build/entitlements.mac.plist",
+			"entitlementsInherit": "build/entitlements.mac.plist"
 		},
 		"win": {
+			"icon": "./public/appicon_256.png",
 			"target": [
 				"nsis",
 				"msi"
@@ -171,7 +173,7 @@
 			"category": "Development"
 		},
 		"directories": {
-			"buildResources": "resources",
+			"buildResources": "public",
 			"output": "release"
 		}
 	},

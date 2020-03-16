@@ -13,6 +13,12 @@ body {
 	padding: 0 18px !important;
 }
 
+.ant-layout-sider {
+	.ant-layout-sider-trigger {
+		border-top: 1px solid #efefef;
+	}
+}
+
 .darkmode-layer, .darkmode-toggle {
 	z-index: 10000;
 }
@@ -57,4 +63,23 @@ body {
 
 .screenshot {
 	max-width: 100px;
+}
+
+.aboutPage {
+	text-align: center;
+
+	.appicon {
+		padding: 50px;
+	}
+
+	.credits {
+		margin-bottom: 50px;
+
+		.ant-col.wrapper-col {
+			text-align: left;
+			margin-top: 30px;
+			padding-top: 30px;
+			border-top: 1px solid #efefef;	
+		}
+	}
 }
