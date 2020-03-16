@@ -66,12 +66,12 @@ class NewRun extends Component {
 		const updatedResolutions = { ...resolutions }
 		const urlsArr = []
 		if (lastRunObj && lastRunObj.pages) {
-			for (let i = 0; i < lastRunObj.pages.lenth; i += 1) {
+			for (let i = 0; i < lastRunObj.pages.length; i += 1) {
 				urlsArr.push(lastRunObj.pages[i].url)
-				if (lastRunObj.pages[i].screenshots.desktop) updatedResolutions.desktop = true
-				if (lastRunObj.pages[i].screenshots.tabletPortrait) updatedResolutions.tabletPortrait = true
-				if (lastRunObj.pages[i].screenshots.tabletLandscape) updatedResolutions.tabletLandscape = true
-				if (lastRunObj.pages[i].screenshots.mobile) updatedResolutions.mobile = true
+				updatedResolutions.desktop = Boolean(lastRunObj.pages[i].screenshots.desktop)
+				updatedResolutions.tabletPortrait = Boolean(lastRunObj.pages[i].screenshots.tabletPortrait)
+				updatedResolutions.tabletLandscape = Boolean(lastRunObj.pages[i].screenshots.tabletLandscape)
+				updatedResolutions.mobile = Boolean(lastRunObj.pages[i].screenshots.mobile)
 			}
 		}
 		const newRunStateKeys = {
@@ -165,6 +165,7 @@ class NewRun extends Component {
 			resolutions
 		}
 		saveRunAction(runObjToSave)
+		// console.log('--> runObjToSave', runObjToSave)
 		storage.saveLastRunObj(runObjToSave)
 		this.setState({ runIsSaved: true })
 	}
@@ -280,7 +281,14 @@ class NewRun extends Component {
 						</Checkbox>
 					</Form.Item> */}
 					<Form.Item>
-						<Button type="primary" onClick={this.handleSubmit.bind(this)}>Start Run</Button>
+						<Button
+							type="primary"
+							size="large"
+							icon="caret-right"
+							onClick={this.handleSubmit.bind(this)}
+						>
+							Start Run
+						</Button>
 					</Form.Item>
 					{/* <pre>{JSON.stringify(this.state, null, 4)}</pre> */}
 				</Form>

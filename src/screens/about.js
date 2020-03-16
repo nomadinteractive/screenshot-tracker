@@ -56,7 +56,7 @@ class About extends Component {
 						<p>
 							We used many open source tools in this tools build. The honorable mentions below. See
 							{' '}
-							<a href="https://github.com/nomadinteractive/screenshot-app/blob/master/package.json">
+							<a className="ext" href="https://github.com/nomadinteractive/screenshot-tracker/blob/master/package.json">
 								package.json in Github
 							</a>
 							{' '}

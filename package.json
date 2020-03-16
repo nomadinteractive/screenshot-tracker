@@ -65,7 +65,7 @@
 		"terser-webpack-plugin": "^2.3.4"
 	},
 	"devDependencies": {
-		"electron": "^6.0.1",
+		"electron": "^8.1.1",
 		"@babel/core": "^7.4.3",
 		"@babel/plugin-proposal-class-properties": "^7.4.0",
 		"@babel/plugin-transform-modules-commonjs": "^7.4.3",
@@ -91,7 +91,7 @@
 		"cross-env": "^5.2.0",
 		"css-hot-loader": "^1.4.4",
 		"css-loader": "^2.1.1",
-		"electron-builder": "^20.39.0",
+		"electron-builder": "^22.4.1",
 		"electron-notarize": "^0.2.1",
 		"enzyme": "^3.9.0",
 		"enzyme-adapter-react-16": "^1.12.1",

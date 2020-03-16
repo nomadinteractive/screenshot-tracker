@@ -16,6 +16,7 @@ exports.default = async function notarizing(context) {
 	if (electronPlatformName !== 'darwin') return
 
 	const appName = context.packager.appInfo.productFilename
+	console.log('--> appName', appName)
 	const appleId = await execPromise('security -q find-generic-password -a `whoami` -s NOMAD_APPLEID_EMAIL -w')
 	const appleIdPassword = await execPromise('security -q find-generic-password -a `whoami` -s NOMAD_APPLEID_PASS -w')
 

@@ -73,23 +73,31 @@ class AppLayout extends Component {
 								<span>New Run</span>
 							</Link>
 						</Menu.Item>
-						<Menu.SubMenu
-							key="runs"
-							title={(
-								<span>
-									<Icon type="clock-circle" />
-									<span>Test Runs</span>
-								</span>
-							)}
-						>
-							{runs && runs.map((run) => (
-								<Menu.Item key={run.id}>
-									<Link to={`/result/${run.id}`}>
-										{run.name}
-									</Link>
-								</Menu.Item>
-							))}
-						</Menu.SubMenu>
+						{(!runs || (runs && runs.length === 0)) && (
+							<Menu.Item key="runs-empty">
+								<Icon type="clock-circle" />
+								<span>You don&apos;t have any runs yet!</span>
+							</Menu.Item>
+						)}
+						{runs && runs.length > 0 && (
+							<Menu.SubMenu
+								key="runs-list"
+								title={(
+									<span>
+										<Icon type="clock-circle" />
+										<span>Runs</span>
+									</span>
+								)}
+							>
+								{runs && runs.map((run) => (
+									<Menu.Item key={run.id}>
+										<Link to={`/result/${run.id}`}>
+											{run.name}
+										</Link>
+									</Menu.Item>
+								))}
+							</Menu.SubMenu>
+						)}
 					</Menu>
 					<Menu
 						style={{
