@@ -1,10 +1,9 @@
 # Screenshot Tracker Desktop App
 
-A simple screenshot tarcking tool based on electron's embedded chromium and
-pupeteer.
+A simple screenshot tarcking tool based on electron's embedded chromium and pupeteer.
 
 
-### Features
+### Features / Tech Used
 
 - Electron
 - Webpack 8
@@ -33,7 +32,7 @@ pupeteer.
 #### Clone this repo
 
 ```
-git clone https://github.com/nomadinteractive/screenshot-app
+git clone https://github.com/nomadinteractive/screenshot-tracker
 ```
 
 #### Install dependencies
@@ -120,7 +119,7 @@ yarn docs
 
 ### License
 
-MIT © [Nomad Interactive](https://github.com/nomadinteractive/screenshot-app/blob/master/LICENSE)
+MIT © [Nomad Interactive](https://github.com/nomadinteractive/screenshot-tracker/blob/master/LICENSE)
 
 Boilerplate derived from
 [Leonardo Rico](https://github.com/kevoj/electron-react-ant-boilerplate/blob/master/LICENSE)

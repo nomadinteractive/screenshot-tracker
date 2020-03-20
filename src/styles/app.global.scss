@@ -25,7 +25,8 @@ body {
 
 .darkmode--activated {
 	// ignore dark mode for elements
-	img.screenshot {
+	img.screenshot,
+	img.screenshot-tarcker-icon {
 		mix-blend-mode: difference;
 	}
 
@@ -66,7 +67,9 @@ body {
 }
 
 .aboutPage {
-	text-align: center;
+	main.ant-layout-content {
+		text-align: center;
+	}
 
 	.appicon {
 		padding: 50px;
@@ -82,4 +85,17 @@ body {
 			border-top: 1px solid #efefef;	
 		}
 	}
+}
+
+.pageWithGradientBg main.ant-layout-content {
+	background: linear-gradient(0deg, rgba(255,255,255,1) 30%, rgba(215,243,255,1) 100%) !important;
+}
+
+.support-bar {
+	max-width: 700px;
+	margin: 0 auto;
+	border-top: 1px solid #efefef;
+	padding: 40px;
+	text-align: center;
+	font-size: 0.9em;
 }

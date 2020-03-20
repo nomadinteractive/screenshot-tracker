@@ -11,10 +11,25 @@ import Layout from '../layout'
 
 const { Title } = Typography
 
+const { shell } = window.require('electron')
+
 class Home extends Component {
+	componentDidMount() {
+		document.addEventListener('click', (e) => {
+			if (
+				e.target.tagName === 'A'
+				&& e.target.className.startsWith('ext')
+				&& e.target.href.startsWith('http')
+			) {
+				e.preventDefault()
+				shell.openExternal(e.target.href)
+			}
+		})
+	}
+
 	render() {
 		return (
-			<Layout>
+			<Layout className="pageWithGradientBg">
 				<Result
 					icon={(
 						<img
@@ -22,6 +37,7 @@ class Home extends Component {
 							width={128}
 							height={128}
 							alt="App Icon"
+							className="screenshot-tarcker-icon"
 						/>
 					)}
 					title={(
@@ -51,6 +67,21 @@ class Home extends Component {
 						</Link>
 					)}
 				/>
+				<div className="support-bar">
+					Feel free to send any questions or your feedback with
+					{' '}
+					{/* eslint-disable-next-line */}
+					<a className="ext" href="https://github.com/nomadinteractive/screenshot-tracker/issues/new">
+						opening an issue
+					</a>
+					{' '}
+					in
+					{' '}
+					{/* eslint-disable-next-line */}
+					<a className="ext" href="https://github.com/nomadinteractive/screenshot-tracker/issues">
+						Github Issues Page
+					</a>
+				</div>
 			</Layout>
 		)
 	}

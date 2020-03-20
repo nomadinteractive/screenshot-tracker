@@ -247,7 +247,7 @@ class NewRun extends Component {
 							>
 								<Icon type="tablet" style={resolutionButtonIconStyle} />
 								<br />
-								<b>Tablet Portrit</b>
+								<b>Tablet Portrait</b>
 								<br />
 								768px
 							</Button>

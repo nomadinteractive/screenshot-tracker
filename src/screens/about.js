@@ -30,13 +30,14 @@ class About extends Component {
 
 	render() {
 		return (
-			<Layout className="aboutPage">
+			<Layout className="aboutPage pageWithGradientBg">
 				<div className="appicon">
 					<img
 						src="./appicon_256.png"
 						width={128}
 						height={128}
 						alt="App Icon"
+						className="screenshot-tarcker-icon"
 					/>
 				</div>
 				<Title level={2}>

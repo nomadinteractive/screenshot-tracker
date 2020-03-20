@@ -1,12 +1,12 @@
 {
-	"name": "screenshot-desktop-tool",
+	"name": "screenshot-tracker",
 	"version": "1.0.0",
 	"description": "Screenshot tracking tool using electron/chromium and puppeteer",
 	"license": "MIT",
 	"private": false,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/nomadinteractive/screenshot-app"
+		"url": "git+https://github.com/nomadinteractive/screenshot-tracker"
 	},
 	"author": {
 		"name": "Nomad Interactive",
@@ -138,8 +138,7 @@
 	},
 	"build": {
 		"productName": "Screenshot Tracker",
-		"appId": "co.nomadinteractive.screenshot-tool",
-		"asar": false,
+		"appId": "co.nomadinteractive.screenshot-tracker",
 		"afterSign": "scripts/notarize.js",
 		"files": [
 			"dist",
