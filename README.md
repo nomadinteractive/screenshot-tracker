@@ -1,6 +1,19 @@
 # Screenshot Tracker Desktop App
 
+![Screenshot Tracker Hero](./__assets/for_github_readme/PromoMarquee.jpg)
+
 A simple screenshot tarcking tool based on electron's embedded chromium and pupeteer.
+
+
+## Screenshots
+
+![Screenshot 1: Result Screen](./__assets/for_github_readme/Gallery1.jpg)
+
+![Screenshot 2: New Run](./__assets/for_github_readme/Gallery2.jpg)
+
+![Screenshot 3: Previews](./__assets/for_github_readme/Gallery3.jpg)
+
+![Screenshot 4: Dark Mode](./__assets/for_github_readme/Gallery4.jpg)
 
 
 ### Features / Tech Used
