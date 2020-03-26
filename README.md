@@ -34,6 +34,22 @@ A simple screenshot tarcking tool based on electron's embedded chromium and pupe
 - Export for Mac, Linux, Windows
 
 
+### Known issues
+
+Looking for support for the following known issues:
+
+- Ability to capture cookie/session and use in screenshot sessions
+- True mobile device emulation (right now just the resolution/width is simulated)
+- App is not working on Linux and Windows Operating Systems due to puppeteer and
+  electron/chromium connection
+  ([#8](https://github.com/nomadinteractive/screenshot-tracker/issues/8),
+  [#11](https://github.com/nomadinteractive/screenshot-tracker/issues/11))
+- Testing on Wimdows
+- Testing on Linux
+- Writing proper react component tests. Right now tests folder only contains
+  tests from original boilerplate code. They are not in proper use.
+
+
 ### Table of contents
 
 * [Install](#install)
