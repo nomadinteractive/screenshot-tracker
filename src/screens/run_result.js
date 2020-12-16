@@ -31,6 +31,8 @@ const getImageBase64Data = (filepath) => {
 	return 'data:image/png;base64,' + imgBase64
 }
 
+const loading = <Icon type="loading" />
+
 class RunResult extends Component {
 	constructor(props) {
 		super(props)
@@ -127,7 +129,7 @@ class RunResult extends Component {
 						</div>
 					)}
 					{record.screenshots[screenshotResName].status === 'pending' && (
-						<Icon type="loading" />
+						loading
 					)}
 					{record.screenshots[screenshotResName].status === 'failed' && (
 						<Icon type="warning" />
@@ -138,6 +140,8 @@ class RunResult extends Component {
 	}
 
 	setTableColumns(run) {
+		if (!run) return
+
 		const columns = [
 			{
 				title: 'URL',
@@ -152,11 +156,67 @@ class RunResult extends Component {
 			},
 		]
 
-		if (run && run.pages[0] && run.pages[0].screenshots) {
+		if (run.pages[0] && run.pages[0].screenshots) {
+			if (run.pages[0].screenshots.desktopLarge) columns.push(this.getResolutionColumnMeta('desktopLarge'))
 			if (run.pages[0].screenshots.desktop) columns.push(this.getResolutionColumnMeta('desktop'))
 			if (run.pages[0].screenshots.tabletLandscape) columns.push(this.getResolutionColumnMeta('tabletLandscape'))
 			if (run.pages[0].screenshots.tabletPortrait) columns.push(this.getResolutionColumnMeta('tabletPortrait'))
 			if (run.pages[0].screenshots.mobile) columns.push(this.getResolutionColumnMeta('mobile'))
+		}
+
+		console.log('--> run', run)
+
+		if (run.options && run.options.lighthouse) {
+			columns.push({
+				title: 'Performance',
+				dataIndex: 'lhr-performance',
+				key: 'lhr-performance',
+				render: (text, record) => (
+					<div>
+						{(record.lhrScores && record.lhrScores.performance)
+							? record.lhrScores.performance * 100 : loading}
+					</div>
+				)
+			})
+			columns.push({
+				title: 'SEO',
+				dataIndex: 'lhr-seo',
+				key: 'lhr-seo',
+				render: (text, record) => (
+					<div>
+						{(record.lhrScores && record.lhrScores.seo)
+							? record.lhrScores.seo * 100 : loading}
+					</div>
+				)
+			})
+			columns.push({
+				title: 'Accessibility',
+				dataIndex: 'lhr-accessibility',
+				key: 'lhr-accessibility',
+				render: (text, record) => (
+					<div>
+						{(record.lhrScores && record.lhrScores.accessibility)
+							? record.lhrScores.accessibility * 100 : loading}
+					</div>
+				)
+			})
+			columns.push({
+				title: 'LH Report',
+				dataIndex: 'lhr-report',
+				key: 'lhr-report',
+				render: (text, record) => (record.lhrHtmlPath ? (
+					<span>
+						<Button
+							size="small"
+							onClick={() => {
+								if (record.lhrHtmlPath) shell.showItemInFolder(record.lhrHtmlPath)
+							}}
+						>
+							<Icon type="read" />
+						</Button>
+					</span>
+				) : loading)
+			})
 		}
 
 		// columns.push({
