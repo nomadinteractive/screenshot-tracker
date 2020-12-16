@@ -4,8 +4,6 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Layout, Menu, Icon } from 'antd'
 
-import { listRuns } from './actions'
-
 const { Sider, Content } = Layout
 
 class AppLayout extends Component {
@@ -14,11 +12,6 @@ class AppLayout extends Component {
 		this.state = {
 			collapsed: true,
 		}
-	}
-
-	componentDidMount() {
-		const { listRunsAction } = this.props
-		listRunsAction()
 	}
 
 	toggle = () => {
@@ -32,7 +25,6 @@ class AppLayout extends Component {
 		const {
 			children,
 			style,
-			runs,
 			className
 		} = this.props
 		const { collapsed } = this.state
@@ -73,31 +65,12 @@ class AppLayout extends Component {
 								<span>New Run</span>
 							</Link>
 						</Menu.Item>
-						{(!runs || (runs && runs.length === 0)) && (
-							<Menu.Item key="runs-empty">
+						<Menu.Item key="runs">
+							<Link to="/runs">
 								<Icon type="clock-circle" />
-								<span>You don&apos;t have any runs yet!</span>
-							</Menu.Item>
-						)}
-						{runs && runs.length > 0 && (
-							<Menu.SubMenu
-								key="runs-list"
-								title={(
-									<span>
-										<Icon type="clock-circle" />
-										<span>Runs</span>
-									</span>
-								)}
-							>
-								{runs && runs.map((run) => (
-									<Menu.Item key={run.id}>
-										<Link to={`/result/${run.id}`}>
-											{run.name}
-										</Link>
-									</Menu.Item>
-								))}
-							</Menu.SubMenu>
-						)}
+								<span>Runs</span>
+							</Link>
+						</Menu.Item>
 					</Menu>
 					<Menu
 						style={{
@@ -140,7 +113,6 @@ AppLayout.defaultProps = {
 
 AppLayout.propTypes = {
 	runs: PropTypes.array.isRequired, // eslint-disable-line
-	listRunsAction: PropTypes.func.isRequired,
 	children: PropTypes.node.isRequired,
 	className: PropTypes.string,
 	style: PropTypes.object // eslint-disable-line react/forbid-prop-types
@@ -150,8 +122,7 @@ const mapStateToProps = (state) => ({
 	runs: state.runs
 })
 
-const mapDispatchToProps = (dispatch) => ({
-	listRunsAction: listRuns(dispatch)
-})
+const mapDispatchToProps = () => ({})
+// const mapDispatchToProps = (dispatch) => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppLayout)

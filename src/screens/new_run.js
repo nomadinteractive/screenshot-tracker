@@ -8,7 +8,7 @@ import {
 	Form,
 	Icon,
 	Input,
-	// Checkbox,
+	Checkbox,
 	PageHeader,
 	notification
 } from 'antd'
@@ -45,13 +45,16 @@ class NewRun extends Component {
 			newRunId: null,
 			name: '',
 			urls: '',
+			delay: 0,
 			resolutions: {
 				desktop: true,
+				desktopLarge: true,
 				tabletPortrait: false,
 				tabletLandscape: false,
 				mobile: true,
 			},
 			options: {
+				lighthouse: false,
 				// meta: false,
 				// og: false,
 				// resource: false
@@ -63,12 +66,14 @@ class NewRun extends Component {
 		const { resolutions } = this.state
 		const newRunId = storage.getNextRunId()
 		const lastRunObj = storage.getLastRunObj()
+		// console.log('--> lastRunObj', lastRunObj)
 		const updatedResolutions = { ...resolutions }
 		const urlsArr = []
 		if (lastRunObj && lastRunObj.pages) {
 			for (let i = 0; i < lastRunObj.pages.length; i += 1) {
 				urlsArr.push(lastRunObj.pages[i].url)
 				updatedResolutions.desktop = Boolean(lastRunObj.pages[i].screenshots.desktop)
+				updatedResolutions.desktopLarge = Boolean(lastRunObj.pages[i].screenshots.desktopLarge)
 				updatedResolutions.tabletPortrait = Boolean(lastRunObj.pages[i].screenshots.tabletPortrait)
 				updatedResolutions.tabletLandscape = Boolean(lastRunObj.pages[i].screenshots.tabletLandscape)
 				updatedResolutions.mobile = Boolean(lastRunObj.pages[i].screenshots.mobile)
@@ -78,7 +83,9 @@ class NewRun extends Component {
 			newRunId,
 			name: `Run #${newRunId} - ${moment().format('M/D H:m a')}`,
 			urls: urlsArr.join('\n') || 'https://apple.com\nhttps://medium.com',
-			resolutions: updatedResolutions
+			resolutions: updatedResolutions,
+			delay: lastRunObj.delay,
+			options: lastRunObj.options,
 		}
 		this.setState(newRunStateKeys)
 	}
@@ -98,14 +105,16 @@ class NewRun extends Component {
 		this.setState({
 			options: {
 				...options,
-				[opt]: !options[opt]
+				[opt]: options ? !options[opt] : true
 			}
 		})
 	}
 
 	handleSubmit() {
 		const { saveRunAction } = this.props
-		const { name, urls, resolutions } = this.state
+		const {
+			name, urls, resolutions, delay, options
+		} = this.state
 
 		if (urls.length < 2) {
 			return notification.error({
@@ -133,6 +142,7 @@ class NewRun extends Component {
 		}
 
 		if (!(resolutions.desktop
+			|| resolutions.desktopLarge
 			|| resolutions.tabletLandscape
 			|| resolutions.tabletPortrait
 			|| resolutions.mobile)) {
@@ -162,7 +172,9 @@ class NewRun extends Component {
 		const runObjToSave = {
 			name,
 			pages: pagesArr,
-			resolutions
+			resolutions,
+			delay,
+			options
 		}
 		saveRunAction(runObjToSave)
 		// console.log('--> runObjToSave', runObjToSave)
@@ -176,9 +188,10 @@ class NewRun extends Component {
 			newRunId,
 			name,
 			urls,
-			resolutions
+			delay,
+			resolutions,
+			options
 		} = this.state
-		// options
 
 		if (runIsSaved) {
 			return <Redirect to={`/result/${newRunId}`} />
@@ -215,6 +228,17 @@ class NewRun extends Component {
 					</Form.Item>
 					<Form.Item label="Screen Sizes">
 						<Button.Group style={{ width: '100%', justifyItems: 'space-between' }}>
+							<Button
+								style={resolutionButtonStyle}
+								type={resolutions.desktopLarge ? 'primary' : 'default'}
+								onClick={() => { this.handleResolutionOptionChange('desktopLarge') }}
+							>
+								<Icon type="desktop" style={resolutionButtonIconStyle} />
+								<br />
+								<b>Desktop (Large)</b>
+								<br />
+								1920px
+							</Button>
 							<Button
 								style={resolutionButtonStyle}
 								type={resolutions.desktop ? 'primary' : 'default'}
@@ -264,8 +288,14 @@ class NewRun extends Component {
 							</Button>
 						</Button.Group>
 					</Form.Item>
-					{/* <Form.Item label="Other Options">
-						<Checkbox onChange={() => { this.handleOptionsChange('meta') }} checked={options.meta}>
+					<Form.Item label="Delay (seconds)">
+						<Input
+							onChange={(e) => { this.setState({ delay: e.target.value }) }}
+							value={delay}
+						/>
+					</Form.Item>
+					<Form.Item label="Other Options">
+						{/* <Checkbox onChange={() => { this.handleOptionsChange('meta') }} checked={options.meta}>
 							<b>Page Meta Tags</b>
 							<i>(Page Title, Meta Description, Keywords)</i>
 						</Checkbox>
@@ -274,12 +304,16 @@ class NewRun extends Component {
 							<b>OG Tags</b>
 							<i>(Share Title, Message, Image)</i>
 						</Checkbox>
-						<br />
-						<Checkbox onChange={() => { this.handleOptionsChange('resource') }} checked={options.resource}>
-							<b>Resources Analysis</b>
-							<i>(Resources Count and Size Breakdown)</i>
+						<br /> */}
+						<Checkbox
+							onChange={() => { this.handleOptionsChange('lighthouse') }}
+							checked={options && options.lighthouse}
+						>
+							<b>Run Lighthouse Report</b>
+							&nbsp;
+							<i>(Performance, SEO, Accesibility)</i>
 						</Checkbox>
-					</Form.Item> */}
+					</Form.Item>
 					<Form.Item>
 						<Button
 							type="primary"
