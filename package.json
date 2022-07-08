@@ -51,7 +51,7 @@
 		"electron-store": "^5.1.0",
 		"electron-window-state": "^5.0.3",
 		"lighthouse": "^6.5.0",
-		"moment": "^2.24.0",
+		"moment": "^2.29.4",
 		"prop-types": "^15.7.2",
 		"puppeteer-core": "^2.1.1",
 		"react": "^16.8.6",
